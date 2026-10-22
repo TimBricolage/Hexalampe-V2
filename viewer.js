@@ -237,6 +237,37 @@
       }, { passive:false });
     }
 
+    // Capture la vue ACTUELLE (même orientation, même zoom) au format JPEG 4:3
+    snapshot(w, h){
+      w = w || 480; h = h || 360;
+      const r = this.renderer;
+      const oldSize = r.getSize(new THREE.Vector2());
+      const oldPR = r.getPixelRatio();
+      const oldAspect = this.camera.aspect;
+
+      r.setPixelRatio(1);
+      r.setSize(w, h);
+      this.camera.aspect = w / h;
+      this.camera.updateProjectionMatrix();
+      this.render();
+
+      const out = document.createElement("canvas");
+      out.width = w; out.height = h;
+      const c = out.getContext("2d");
+      const g = c.createRadialGradient(w/2, h*0.45, 10, w/2, h*0.45, Math.max(w,h)*0.7);
+      g.addColorStop(0, "#14405c"); g.addColorStop(1, "#050b12");
+      c.fillStyle = g; c.fillRect(0, 0, w, h);
+      c.drawImage(this.dom, 0, 0, w, h);
+      const url = out.toDataURL("image/jpeg", 0.8);
+
+      r.setPixelRatio(oldPR);
+      r.setSize(oldSize.x, oldSize.y);
+      this.camera.aspect = oldAspect;
+      this.camera.updateProjectionMatrix();
+      this.dirty = true;
+      return url;
+    }
+
     destroy(){
       this.alive = false;
       this._ro.disconnect();

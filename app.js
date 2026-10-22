@@ -264,5 +264,5 @@
   **************************/
   I18N.set(I18N.detect());
 
-  window.App = { getHexes, loadHexes, showToast, hideToast, switchView, analysisMessage };
+  window.App = { snapshot: () => viewer.snapshot(480, 360), getHexes, loadHexes, showToast, hideToast, switchView, analysisMessage };
 })();

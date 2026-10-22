@@ -47,6 +47,9 @@ export default {
     if (!originOk) return json({ error: "origin" }, 403);
 
     try {
+      for (const k of ["GITHUB_TOKEN", "GITHUB_REPO"]) {
+        if (!env[k]) return json({ error: "server", detail: "Variable manquante dans Cloudflare : " + k }, 500);
+      }
       // ---- limitation par IP ----
       const ip = request.headers.get("CF-Connecting-IP") || "unknown";
       const limit = parseInt(env.MAX_PER_HOUR || "5", 10);
@@ -94,7 +97,7 @@ export default {
       return json({ ok: true, id });
     } catch (e) {
       console.error("worker error", e && e.message ? e.message : e);
-      return json({ error: "server" }, 500);
+      return json({ error: "server", detail: String(e && e.message ? e.message : e) }, 500);
     }
   }
 };

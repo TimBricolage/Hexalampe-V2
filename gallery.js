@@ -57,7 +57,7 @@
     try{ Notice.analyze(hexes); }
     catch(err){ App.showToast(App.analysisMessage(err), true, 6000); return; }
 
-    try{ pendingThumb = makeThumbnail(hexes, 360, 270); }catch(e){ console.error(e); pendingThumb = null; }
+    try{ pendingThumb = App.snapshot(); }catch(e){ console.error(e); pendingThumb = null; }
     const prev = $("share-preview");
     prev.innerHTML = "";
     if(pendingThumb){
@@ -118,6 +118,7 @@
         return;
       }
 
+      console.error("Réponse de l'API :", res.status, json);
       const map = { name:"errName", exists:"errExists", rate:"errRate" };
       const code = json.error;
       if(map[code]) setMsg(t(map[code]), "err");
