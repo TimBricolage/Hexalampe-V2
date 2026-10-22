@@ -5,7 +5,7 @@
   "Ajouter à la galerie" indique que la fonction n'est pas encore activée.
 **************************/
 window.HEXA_CONFIG = {
-  API_URL: "hexalampe-gallery.timote-bobo.workers.dev",                       // ex : "https://hexalampe-gallery.votrecompte.workers.dev"
+  API_URL: "https://hexalampe-gallery.timote-bobo.workers.dev",                       // ex : "https://hexalampe-gallery.votrecompte.workers.dev"
   INDEX_URL: "models/index.json",    // liste des modèles (générée automatiquement)
   MAX_NAME: 30
 };
