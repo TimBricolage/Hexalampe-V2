@@ -15,6 +15,7 @@
  *   GITHUB_REPO    ex : "moncompte/hexalampe"
  *   GITHUB_BRANCH  ex : "main"
  *   ALLOWED_ORIGIN ex : "https://moncompte.github.io"  (plusieurs possibles, séparés par des virgules)
+ *   ADMIN_PASSWORD (secret)  mot de passe de la page admin.html (20 caractères minimum conseillés)
  *   MAX_PER_HOUR   (optionnel) envois max par heure et par adresse IP, défaut 5
  */
 
@@ -29,7 +30,8 @@ const hits = new Map();
 export default {
   async fetch(request, env) {
     const origin = request.headers.get("Origin") || "";
-    const allowed = (env.ALLOWED_ORIGIN || "").split(",").map(s => s.trim()).filter(Boolean);
+    const allowed = (env.ALLOWED_ORIGIN || "").split(",").map(s => s.trim()).filter(Boolean)
+      .map(s => { try { return new URL(s).origin; } catch (e) { return s; } });
     const originOk = allowed.length === 0 || allowed.includes(origin);
     const cors = {
       "Access-Control-Allow-Origin": originOk && origin ? origin : (allowed[0] || "*"),
@@ -45,6 +47,11 @@ export default {
     if (request.method === "GET") return json({ ok: true, service: "hexalampe-gallery" });
     if (request.method !== "POST") return json({ error: "method" }, 405);
     if (!originOk) return json({ error: "origin" }, 403);
+
+    // espace administrateur (suppression de modèles) : protégé par mot de passe
+    if (new URL(request.url).pathname.replace(/\/+$/, "") === "/admin") {
+      return handleAdmin(request, env, json);
+    }
 
     try {
       for (const k of ["GITHUB_TOKEN", "GITHUB_REPO"]) {
@@ -222,4 +229,89 @@ async function updateIndex(env, entry) {
     if (!list.some(m => m.id === entry.id)) list.push(entry);
     return JSON.stringify(list, null, 1) + "\n";
   });
+}
+
+/* ---------------- administration ---------------- */
+
+const failures = new Map();   // échecs de connexion par IP
+
+async function safeEqual(a, b) {
+  // comparaison à temps constant (via empreintes SHA-256)
+  const enc = new TextEncoder();
+  const [ha, hb] = await Promise.all([
+    crypto.subtle.digest("SHA-256", enc.encode(a)),
+    crypto.subtle.digest("SHA-256", enc.encode(b))
+  ]);
+  const x = new Uint8Array(ha), y = new Uint8Array(hb);
+  let diff = 0;
+  for (let i = 0; i < x.length; i++) diff |= x[i] ^ y[i];
+  return diff === 0;
+}
+
+async function handleAdmin(request, env, json) {
+  const secret = env.ADMIN_PASSWORD || "";
+  // sans mot de passe solide configuré, l'administration est désactivée
+  if (secret.length < 12) return json({ error: "disabled" }, 503);
+
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const now = Date.now();
+  const recent = (failures.get(ip) || []).filter(t => now - t < 15 * 60 * 1000);
+  if (recent.length >= 5) return json({ error: "locked" }, 429);
+
+  const text = await request.text();
+  if (text.length > 2000) return json({ error: "invalid" }, 413);
+  let body;
+  try { body = JSON.parse(text); } catch (e) { return json({ error: "invalid" }, 400); }
+
+  const ok = typeof body.password === "string" && await safeEqual(body.password, secret);
+  if (!ok) {
+    recent.push(now); failures.set(ip, recent);
+    await sleep(1000);                       // ralentit les essais
+    return json({ error: "auth" }, 401);
+  }
+  failures.delete(ip);
+
+  if (body.action === "check") return json({ ok: true });
+
+  if (body.action === "delete") {
+    // l'identifiant doit être exactement 12 caractères hexadécimaux (aucun chemin possible)
+    if (typeof body.id !== "string" || !/^[0-9a-f]{12}$/.test(body.id)) return json({ error: "invalid" }, 400);
+    try {
+      await deleteModel(env, body.id);
+      return json({ ok: true });
+    } catch (e) {
+      console.error("admin delete error", e && e.message ? e.message : e);
+      return json({ error: "server", detail: String(e && e.message ? e.message : e) }, 500);
+    }
+  }
+  return json({ error: "invalid" }, 400);
+}
+
+async function deleteFile(env, path, message) {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const existing = await getFile(env, path);
+    if (!existing) return;                   // déjà absent
+    const res = await ghFetch(env, path, {
+      method: "DELETE",
+      body: JSON.stringify({ message, sha: existing.sha, branch: env.GITHUB_BRANCH || "main" })
+    });
+    if (res.ok || res.status === 404) return;
+    if (res.status === 409 || res.status === 422) { await sleep(350 * (attempt + 1)); continue; }
+    throw new Error(`GitHub DELETE ${path} -> ${res.status}`);
+  }
+  throw new Error(`GitHub DELETE ${path} : trop de conflits`);
+}
+
+async function deleteModel(env, id) {
+  const msg = `Galerie : suppression de ${id}`;
+  // 1) on retire d'abord de la liste (le modèle disparaît du site)
+  await putFile(env, "models/index.json", null, msg, current => {
+    let list = [];
+    try { list = JSON.parse(current || "[]"); } catch (e) { list = []; }
+    if (!Array.isArray(list)) list = [];
+    return JSON.stringify(list.filter(m => m.id !== id), null, 1) + "\n";
+  });
+  // 2) puis on supprime les fichiers
+  await deleteFile(env, `models/${id}.json`, msg);
+  await deleteFile(env, `models/${id}.jpg`, msg);
 }
