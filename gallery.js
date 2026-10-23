@@ -29,7 +29,11 @@
   }
 
   function getPending(){
-    try{ return JSON.parse(localStorage.getItem(PENDING_KEY) || "[]"); }catch(e){ return []; }
+    try{
+      const list = JSON.parse(localStorage.getItem(PENDING_KEY) || "[]");
+      // un envoi en attente expire au bout d'1 heure
+      return list.filter(p => Date.now() - new Date(p.date).getTime() < 3600000);
+    }catch(e){ return []; }
   }
   function setPending(list){
     try{ localStorage.setItem(PENDING_KEY, JSON.stringify(list.slice(-10))); }catch(e){}
@@ -253,7 +257,17 @@
     }catch(e){
       console.error(e);
       App.showToast(t("galError"), true, 5000);
+      // le modèle n'existe plus : on ferme et on retire la carte
+      items = items.filter(m => m.id !== item.id);
+      closeModel();
+      renderCards();
     }
+  }
+
+  function renderCards(){
+    gridEl.innerHTML = ""; shown = 0;
+    statusEl.textContent = items.length ? "" : t("galEmpty");
+    showMore();
   }
 
   function closeModel(){
