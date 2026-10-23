@@ -200,6 +200,7 @@
     showToast(t("generating"), false, 0);
     try{
       await Notice.downloadNotice(getHexes());
+      Stats.event("notice-telechargee");
       hideToast();
     }catch(err){
       console.error(err);
@@ -218,6 +219,7 @@
     document.getElementById("view-gallery").hidden = name !== "gallery";
     document.getElementById("bottom").hidden = name !== "config";
     if(name === "config") viewer.resize();
+    if(name === "gallery") Stats.event("galerie-ouverte");
     document.dispatchEvent(new CustomEvent("viewchange", { detail:{ name } }));
   }
   document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => switchView(b.dataset.view)));
@@ -256,6 +258,7 @@
 
   document.addEventListener("langchange", () => {
     langCur.textContent = I18N.current.toUpperCase();
+    Stats.event("langue-" + I18N.current);
     document.title = "HexaLamp";
   });
 

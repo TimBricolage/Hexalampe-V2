@@ -116,6 +116,7 @@
         list.push({ id:json.id, name, date:new Date().toISOString(), n:hexes.length,
                     hexes:hexes.map(h => [h.q,h.r,h.thickness]), thumb:pendingThumb });
         setPending(list);
+        Stats.event("galerie-ajout");
         setMsg(t("shared"), "ok");
         sending = false;
         setTimeout(() => { shareModal.hidden = true; shareOk.disabled = false; }, 2200);
@@ -292,6 +293,7 @@
     App.showToast(t("generating"), false, 0);
     try{
       await Notice.downloadNotice(current.hexes, { creator: current.item.name });
+      Stats.event("galerie-notice-telechargee");
       App.hideToast();
     }catch(err){
       console.error(err);

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>HexaLamp - Administration</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  body{ min-height:100%; height:auto; }
+  .wrap{ width:min(1100px,100%); margin:0 auto; padding:24px 16px 60px; }
+  .login{ width:min(420px,100%); margin:12vh auto 0; padding:26px; }
+  .login h2{ margin:0 0 6px; }
+  .login input{ width:100%; padding:12px 14px; font-size:15px; color:var(--text); background:rgba(0,0,0,.45);
+    border:1px solid var(--glass-line); border-radius:10px; outline:none; margin:12px 0; }
+  .login input:focus{ border-color:var(--cyan); box-shadow:0 0 12px rgba(25,227,255,.35); }
+  .bar{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+  .bar h2{ margin:0; }
+  .card .del{ margin:0 14px 14px; width:calc(100% - 28px); padding:9px; border-radius:9px; cursor:pointer; font-weight:600;
+    background:rgba(255,70,70,.12); border:1px solid rgba(255,100,100,.6); color:#ff9a9a; }
+  .card .del:hover{ background:rgba(255,70,70,.28); }
+  .card .del:disabled{ opacity:.5; cursor:wait; }
+  .card{ cursor:default; }
+  .card:hover{ transform:none; }
+  .id{ font-family:monospace; font-size:11px; color:var(--muted); }
+  a.link{ color:var(--cyan); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- connexion -->
+  <section id="login" class="glass login">
+    <h2>Administration</h2>
+    <p class="muted">Accès réservé. Le mot de passe est vérifié par le serveur à chaque action.</p>
+    <input id="pw" type="password" autocomplete="current-password" placeholder="Mot de passe">
+    <p id="login-msg" class="msg" role="status"></p>
+    <button id="login-btn" class="btn primary" style="width:100%;padding:12px;font-size:14px">Se connecter</button>
+  </section>
+
+  <!-- liste -->
+  <section id="panel" hidden>
+    <div class="bar">
+      <h2 id="count">Modèles</h2>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button id="refresh" class="btn ghost">Actualiser</button>
+        <button id="logout" class="btn ghost">Se déconnecter</button>
+        <a class="btn ghost link" href="./">Retour au site</a>
+      </div>
+    </div>
+    <p id="status" class="muted"></p>
+    <div id="mgrid" class="gallery-grid"></div>
+  </section>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+
+<script src="config.js"></script>
+<script>
+(function(){
+  const CFG = window.HEXA_CONFIG || {};
+  const API = (CFG.API_URL || "").replace(/\/+$/, "") + "/admin";
+  const $ = id => document.getElementById(id);
+  let password = "";          // gardé uniquement en mémoire (jamais écrit sur le disque)
+
+  function toast(msg, err){
+    const t = $("toast"); t.textContent = msg; t.classList.toggle("err", !!err); t.hidden = false;
+    clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 4500);
+  }
+
+  async function call(body){
+    const res = await fetch(API, { method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ ...body, password }) });
+    let json = {}; try{ json = await res.json(); }catch(e){}
+    return { status:res.status, json };
+  }
+
+  function errText(r){
+    const e = r.json && r.json.error;
+    if(e === "auth") return "Mot de passe incorrect.";
+    if(e === "locked") return "Trop d'essais. Réessayez dans 15 minutes.";
+    if(e === "disabled") return "Administration non activée : ajoutez le secret ADMIN_PASSWORD (12 caractères minimum) dans Cloudflare.";
+    if(e === "origin") return "Origine refusée : vérifiez ALLOWED_ORIGIN dans Cloudflare.";
+    return "Erreur serveur" + (r.json && r.json.detail ? " : " + r.json.detail : ".");
+  }
+
+  async function login(){
+    if(!CFG.API_URL){ $("login-msg").className = "msg err"; $("login-msg").textContent = "API_URL est vide dans config.js."; return; }
+    password = $("pw").value;
+    $("login-msg").className = "msg"; $("login-msg").textContent = "…";
+    $("login-btn").disabled = true;
+    try{
+      const r = await call({ action:"check" });
+      if(r.status === 200 && r.json.ok){
+        $("login").hidden = true; $("panel").hidden = false; $("pw").value = "";
+        load();
+      }else{
+        password = "";
+        $("login-msg").className = "msg err"; $("login-msg").textContent = errText(r);
+      }
+    }catch(e){
+      password = "";
+      $("login-msg").className = "msg err"; $("login-msg").textContent = "Connexion impossible.";
+    }
+    $("login-btn").disabled = false;
+  }
+
+  function logout(){ password = ""; $("panel").hidden = true; $("login").hidden = false; $("mgrid").innerHTML = ""; }
+
+  async function load(){
+    $("status").textContent = "Chargement…"; $("mgrid").innerHTML = "";
+    try{
+      const res = await fetch("models/index.json?t=" + Date.now(), { cache:"no-store" });
+      const list = (await res.json()).sort((a,b) => String(b.date).localeCompare(String(a.date)));
+      $("count").textContent = list.length + " modèle" + (list.length > 1 ? "s" : "");
+      $("status").textContent = list.length ? "" : "Aucun modèle.";
+      list.forEach(m => $("mgrid").appendChild(card(m)));
+    }catch(e){ $("status").textContent = "Impossible de lire models/index.json"; }
+  }
+
+  function card(m){
+    const c = document.createElement("div"); c.className = "card";
+    const img = document.createElement("img"); img.className = "thumb"; img.loading = "lazy"; img.alt = "";
+    img.src = "models/" + encodeURIComponent(m.id) + ".jpg";
+    const info = document.createElement("div"); info.className = "info";
+    const by = document.createElement("div"); by.className = "by"; by.textContent = m.name;
+    const meta = document.createElement("div"); meta.className = "meta";
+    meta.textContent = m.n + " hexagones · " + new Date(m.date).toLocaleDateString("fr-FR");
+    const id = document.createElement("div"); id.className = "id"; id.textContent = m.id;
+    info.append(by, meta, id);
+    const del = document.createElement("button"); del.className = "del"; del.textContent = "Supprimer";
+    del.addEventListener("click", async () => {
+      if(!confirm("Supprimer définitivement le modèle de « " + m.name + " » ?")) return;
+      del.disabled = true; del.textContent = "Suppression…";
+      try{
+        const r = await call({ action:"delete", id:m.id });
+        if(r.status === 200 && r.json.ok){ c.remove(); toast("Modèle supprimé. Le site se met à jour sous 1 à 2 minutes."); }
+        else{ toast(errText(r), true); del.disabled = false; del.textContent = "Supprimer"; }
+      }catch(e){ toast("Connexion impossible.", true); del.disabled = false; del.textContent = "Supprimer"; }
+    });
+    c.append(img, info, del);
+    return c;
+  }
+
+  $("login-btn").addEventListener("click", login);
+  $("pw").addEventListener("keydown", e => { if(e.key === "Enter") login(); });
+  $("logout").addEventListener("click", logout);
+  $("refresh").addEventListener("click", load);
+})();
+</script>
+</body>
+</html>
