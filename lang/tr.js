@@ -36,7 +36,7 @@ I18N.register("tr", {
   nAsm:"MONTAJ",
   nAsm1:"Numaralı planı izleyin", nAsm2:"Adımların sırasına uyun",
   nAsm3:"Parçaları [relier] dosyasındaki bağlantılarla birleştirin",
-  nProject:"PROJE", nProj1:"HexaLamp modüler sistemi", nProj2:"Tasarım ve geliştirme: Tim_Bricolage",
+  nProject:"PROJE", nProj1:"HexaLampe modüler sistemi", nProj2:"Tasarım ve geliştirme: Tim_Bricolage",
   nProj3:"Yorum bırakmayı ve eserlerinizi paylaşmayı unutmayın",
   nProj4:"Bu sitede neyi geliştirebileceğimi de bana söyleyin",
   nVideo:"MONTAJ VİDEOSU YOUTUBE KANALIMDA:"

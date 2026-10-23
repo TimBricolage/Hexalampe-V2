@@ -1,5 +1,5 @@
 /*************************
-  APP - configurateur HexaLamp
+  APP - configurateur HexaLampe
 **************************/
 (function(){
 
@@ -259,7 +259,7 @@
   document.addEventListener("langchange", () => {
     langCur.textContent = I18N.current.toUpperCase();
     Stats.event("langue-" + I18N.current);
-    document.title = "HexaLamp";
+    document.title = "HexaLampe";
   });
 
   /*************************

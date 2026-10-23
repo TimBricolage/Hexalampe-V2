@@ -36,7 +36,7 @@ I18N.register("zh", {
   nAsm:"组装",
   nAsm1:"按照编号图纸操作", nAsm2:"按步骤顺序进行",
   nAsm3:"使用 [relier] 文件中的连接件连接各零件",
-  nProject:"项目", nProj1:"HexaLamp 模块化系统", nProj2:"设计与开发：Tim_Bricolage",
+  nProject:"项目", nProj1:"HexaLampe 模块化系统", nProj2:"设计与开发：Tim_Bricolage",
   nProj3:"别忘了留下评论并分享您的作品",
   nProj4:"也请告诉我这个网站还有哪些可以改进的地方",
   nVideo:"组装视频请见我的 YouTube 频道："

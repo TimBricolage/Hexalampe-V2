@@ -1,5 +1,5 @@
 /**
- * HexaLamp - API de la galerie (Cloudflare Worker)
+ * HexaLampe - API de la galerie (Cloudflare Worker)
  *
  * Reçoit un modèle envoyé depuis le site, le vérifie, puis l'enregistre dans votre
  * dépôt GitHub (dossier models/) avec l'API GitHub. Le jeton GitHub reste secret,

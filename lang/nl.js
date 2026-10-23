@@ -36,7 +36,7 @@ I18N.register("nl", {
   nAsm:"MONTAGE",
   nAsm1:"Volg het genummerde plan", nAsm2:"Houd de volgorde van de stappen aan",
   nAsm3:"Verbind de onderdelen met de voorziene verbindingen uit het bestand [relier]",
-  nProject:"PROJECT", nProj1:"Modulair systeem HexaLamp", nProj2:"Ontwerp & ontwikkeling: Tim_Bricolage",
+  nProject:"PROJECT", nProj1:"Modulair systeem HexaLampe", nProj2:"Ontwerp & ontwikkeling: Tim_Bricolage",
   nProj3:"Vergeet niet een reactie achter te laten en je creaties te delen",
   nProj4:"Vertel me ook wat ik op deze site zou kunnen verbeteren",
   nVideo:"MONTAGEVIDEO BESCHIKBAAR OP MIJN YOUTUBE-KANAAL:"

@@ -36,7 +36,7 @@ I18N.register("en", {
   nAsm:"ASSEMBLY",
   nAsm1:"Follow the numbered plan", nAsm2:"Respect the order of the steps",
   nAsm3:"Join the parts with their planned connectors using the [relier] file",
-  nProject:"PROJECT", nProj1:"HexaLamp modular system", nProj2:"Design & development: Tim_Bricolage",
+  nProject:"PROJECT", nProj1:"HexaLampe modular system", nProj2:"Design & development: Tim_Bricolage",
   nProj3:"Don't forget to leave a comment and share your creations",
   nProj4:"Also tell me what I could improve on this site",
   nVideo:"ASSEMBLY VIDEO AVAILABLE ON MY YOUTUBE CHANNEL:"

@@ -36,7 +36,7 @@ I18N.register("ko", {
   nAsm:"조립",
   nAsm1:"번호가 매겨진 도면을 따르세요", nAsm2:"단계 순서를 지키세요",
   nAsm3:"[relier] 파일의 연결 부품으로 부품들을 연결하세요",
-  nProject:"프로젝트", nProj1:"HexaLamp 모듈형 시스템", nProj2:"설계 및 개발: Tim_Bricolage",
+  nProject:"프로젝트", nProj1:"HexaLampe 모듈형 시스템", nProj2:"설계 및 개발: Tim_Bricolage",
   nProj3:"댓글을 남기고 작품을 공유해 주세요",
   nProj4:"이 사이트에서 개선할 점도 알려 주세요",
   nVideo:"조립 영상은 제 YouTube 채널에서 볼 수 있습니다:"

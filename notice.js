@@ -346,7 +346,7 @@
     const data = analyze(hexes);
     const imgData = generateNumberedImage(data.list);
     const pdf = await buildPdf(data, imgData, opts);
-    pdf.save("Notice Hexalamp.pdf");
+    pdf.save("Notice Hexalampe.pdf");
   }
 
   window.Notice = { analyze, downloadNotice, axialToPixel, HEX_DIRS };

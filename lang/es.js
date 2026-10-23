@@ -36,7 +36,7 @@ I18N.register("es", {
   nAsm:"MONTAJE",
   nAsm1:"Seguir el plano numerado", nAsm2:"Respetar el orden de los pasos",
   nAsm3:"Unir las piezas con sus uniones previstas usando el archivo [relier]",
-  nProject:"PROYECTO", nProj1:"Sistema modular HexaLamp", nProj2:"Diseño y desarrollo: Tim_Bricolage",
+  nProject:"PROYECTO", nProj1:"Sistema modular HexaLampe", nProj2:"Diseño y desarrollo: Tim_Bricolage",
   nProj3:"No olvides dejar un comentario y compartir tus creaciones",
   nProj4:"Dime también qué podría mejorar en este sitio",
   nVideo:"VÍDEO DE MONTAJE DISPONIBLE EN MI CANAL DE YOUTUBE:"

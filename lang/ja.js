@@ -36,7 +36,7 @@ I18N.register("ja", {
   nAsm:"組み立て",
   nAsm1:"番号付きの図面に従ってください", nAsm2:"手順の順番を守ってください",
   nAsm3:"[relier] ファイルの接続パーツでパーツ同士をつなげてください",
-  nProject:"プロジェクト", nProj1:"HexaLamp モジュラーシステム", nProj2:"設計・開発：Tim_Bricolage",
+  nProject:"プロジェクト", nProj1:"HexaLampe モジュラーシステム", nProj2:"設計・開発：Tim_Bricolage",
   nProj3:"コメントや作品のシェアもぜひお願いします",
   nProj4:"このサイトの改善点もぜひ教えてください",
   nVideo:"組み立て動画は私の YouTube チャンネルで公開中："

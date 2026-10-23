@@ -36,7 +36,7 @@ I18N.register("id", {
   nAsm:"PERAKITAN",
   nAsm1:"Ikuti denah bernomor", nAsm2:"Patuhi urutan langkah",
   nAsm3:"Sambungkan komponen dengan penghubung yang sesuai menggunakan file [relier]",
-  nProject:"PROYEK", nProj1:"Sistem modular HexaLamp", nProj2:"Desain & pengembangan: Tim_Bricolage",
+  nProject:"PROYEK", nProj1:"Sistem modular HexaLampe", nProj2:"Desain & pengembangan: Tim_Bricolage",
   nProj3:"Jangan lupa tinggalkan komentar dan bagikan karya Anda",
   nProj4:"Beri tahu saya juga apa yang bisa saya tingkatkan di situs ini",
   nVideo:"VIDEO PERAKITAN TERSEDIA DI KANAL YOUTUBE SAYA:"

@@ -36,7 +36,7 @@ I18N.register("sv", {
   nAsm:"MONTERING",
   nAsm1:"Följ den numrerade planen", nAsm2:"Följ stegens ordning",
   nAsm3:"Koppla ihop delarna med de avsedda förbindelserna från filen [relier]",
-  nProject:"PROJEKT", nProj1:"Modulärt system HexaLamp", nProj2:"Design & utveckling: Tim_Bricolage",
+  nProject:"PROJEKT", nProj1:"Modulärt system HexaLampe", nProj2:"Design & utveckling: Tim_Bricolage",
   nProj3:"Glöm inte att lämna en kommentar och dela dina skapelser",
   nProj4:"Berätta också vad jag kan förbättra på den här webbplatsen",
   nVideo:"MONTERINGSVIDEO FINNS PÅ MIN YOUTUBE-KANAL:"

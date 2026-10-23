@@ -36,7 +36,7 @@ I18N.register("vi", {
   nAsm:"LẮP RÁP",
   nAsm1:"Làm theo sơ đồ đã đánh số", nAsm2:"Tuân thủ thứ tự các bước",
   nAsm3:"Nối các chi tiết bằng khớp nối tương ứng trong tệp [relier]",
-  nProject:"DỰ ÁN", nProj1:"Hệ thống mô-đun HexaLamp", nProj2:"Thiết kế & phát triển: Tim_Bricolage",
+  nProject:"DỰ ÁN", nProj1:"Hệ thống mô-đun HexaLampe", nProj2:"Thiết kế & phát triển: Tim_Bricolage",
   nProj3:"Đừng quên để lại bình luận và chia sẻ tác phẩm của bạn",
   nProj4:"Hãy cho tôi biết tôi có thể cải thiện điều gì trên trang này",
   nVideo:"VIDEO LẮP RÁP CÓ TRÊN KÊNH YOUTUBE CỦA TÔI:"
